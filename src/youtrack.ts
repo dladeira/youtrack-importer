@@ -6,7 +6,7 @@ export async function findYouTrackIssueByGitHubNumber(
     const query = `[GH-${githubNumber}]`
     const url = `${
         process.env.YOUTRACK_URL
-    }/api/issues?query=${encodeURIComponent(query)}&fields=id`
+    }/api/issues?query=${encodeURIComponent(query)}&fields=id,summary`
 
     const res = await fetch(url, {
         headers: {
@@ -20,7 +20,12 @@ export async function findYouTrackIssueByGitHubNumber(
     }
 
     const issues = (await res.json()) as YouTrackIssue[]
-    return issues.length > 0 ? issues[0].id : null
+
+    const exactMatch = issues.find((issue) =>
+        issue.summary.includes(`[GH-${githubNumber}]`)
+    )
+
+    return exactMatch ? exactMatch.id : null
 }
 
 export async function createYouTrackIssue(
