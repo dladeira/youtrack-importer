@@ -7,20 +7,29 @@ import {
 } from "./youtrack.js"
 import type { GitHubIssue } from "./types.js"
 
+const SYNC_INTERVAL = 5 * 1000 // 5 sec
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
 async function bootstrap() {
-    verifyEnv()
+    while (true) {
+        verifyEnv()
 
-    console.log("Starting sync...")
+        console.log("Starting sync...")
 
-    const githubIssues = await fetchGitHubIssues()
+        const githubIssues = await fetchGitHubIssues()
 
-    for (const issue of githubIssues) {
-        const youtrackId = await findYouTrackIssueByGitHubNumber(issue.number)
+        for (const issue of githubIssues) {
+            const youtrackId = await findYouTrackIssueByGitHubNumber(
+                issue.number
+            )
 
-        await syncOrCreateYoutrackIssue(youtrackId, issue)
+            await syncOrCreateYoutrackIssue(youtrackId, issue)
+        }
+
+        console.log("Sync complete!")
+
+        await wait(SYNC_INTERVAL)
     }
-
-    console.log("Sync complete!")
 }
 
 async function syncOrCreateYoutrackIssue(
