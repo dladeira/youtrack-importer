@@ -1,0 +1,6 @@
+{
+    "watch": ["src"],
+    "exec": "tsx src/index.ts",
+    "ext": "ts",
+    "legacyWatch": true
+}
