@@ -27,6 +27,7 @@ npm start
 **Docker:**
 
 ```bash
-docker build -t youtrack-importer .
-docker run --rm --env-file .env youtrack-importer
+make build
+make start
+make stop
 ```
